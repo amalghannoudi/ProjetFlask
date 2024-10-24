@@ -82,3 +82,41 @@
     padding-top: 5%;
 
 }
+
+.containerQUIZ {
+    background-color: rgba(247, 243, 243, 0.8); /* Fond légèrement transparent (0.8 pour 80% d'opacité) */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 30px; /* Espacement interne */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
+    display: flex; /* Utiliser Flexbox pour centrer le contenu */
+    flex-direction: column; /* Orientation verticale */
+    justify-content: center; /* Centrer verticalement */
+    align-items: center; /* Centrer horizontalement */
+    min-height: 70vh; /* Hauteur minimale pour centrer verticalement */
+    width: 50%; /* Largeur du conteneur */
+}
+
+
+.module-title {
+    letter-spacing: 1px;
+    font-size: 3.5rem;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: #b352c9;
+}
+
+.question {
+    margin-bottom: 20px;
+   
+}
+
+.response {
+    margin-left: 20px;
+    text-align: left; /* Aligner les réponses à gauche */
+}
+
+h5 {
+    color: #3c3440; /* Couleur du texte des questions */
+}
+.align-left {
+    padding-left: 90%; /* Aligne le texte à gauche */
+}

@@ -12,7 +12,7 @@ app.secret_key = "key"
 app.permanent_session_lifetime = timedelta(minutes=10)
 
 # Configuration de la base de données pour PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/ProjetPython'  # Modifiez le nom d'utilisateur et le mot de passe si nécessaire
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/ProjetPython'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Créez une instance de SQLAlchemy
@@ -35,13 +35,14 @@ class Module(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False, )
     image = db.Column(db.String(200), nullable=False)
+
 # Modèle pour représenter une question
 class Question(db.Model):
     __tablename__ = 'questions'
     
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(500), nullable=False)
-    module_id = db.Column(db.Integer, db.ForeignKey('modules.id'), nullable=False)  # Clé étrangère vers Module
+    module_id = db.Column(db.Integer, db.ForeignKey('modules.id'), nullable=False)
     module = db.relationship('Module', backref=db.backref('questions', lazy=True))
 
 # Modèle pour représenter une réponse
@@ -50,8 +51,8 @@ class Response(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     response = db.Column(db.String(500), nullable=False)
-    value = db.Column(db.Boolean, nullable=False)  # True pour correct, False pour incorrect
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)  # Clé étrangère vers Question
+    value = db.Column(db.Boolean, nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
     question = db.relationship('Question', backref=db.backref('responses', lazy=True))
 
 
@@ -87,8 +88,8 @@ def login():
         user = Users.query.filter_by(email=email).first()  
         if user is None:
             flash('Ce user n\'existe pas.') 
-       # elif not check_password_hash(user.password, password):
-          #  flash('Mot de passe incorrect.') 
+        elif user.password != password:  
+            flash('Mot de passe incorrect.') 
         else:
             session['username'] = email  
             return redirect(url_for('home', user=email))   
@@ -104,7 +105,6 @@ def signup():
         email = form.email.data
         password = form.password.data
 
-        # Check if the user already exists
         if Users.query.filter_by(email=email).first():
             flash('The email is already registered.')
         else:
@@ -137,27 +137,34 @@ def quiz(module_name):
     if 'username' in session:
         if request.method == 'POST':
             score = 0
-            return redirect(url_for('result', score=score))
-        
-        # Récupérer le module en fonction du nom passé dans l'URL
+            total_questions = 0
+
+            # Récupérer les réponses postées
+            for key, selected_response in request.form.items():
+                question_id = int(key.split('_')[1])
+                correct_response = Response.query.filter_by(question_id=question_id, value=True).first()
+
+                if correct_response and selected_response == correct_response.response:
+                    score += 1
+                total_questions += 1
+
+            final_score = (score / total_questions) * 100 if total_questions > 0 else 0
+
+            # Rediriger vers la page de résultat
+            return redirect(url_for('result', user_email=session['username'], module_name=module_name, score=int(final_score)))
+
         module = Module.query.filter_by(title=module_name).first()
-
         if module:
-            return render_template('quizz.html', module=module)
-        else:
-            flash('Module non trouvé.')
-            return redirect(url_for('home', user=session['username']))
-    else:
-        return redirect(url_for('login'))
+            questions = Question.query.filter_by(module_id=module.id).all()
+            responses = {q.id: Response.query.filter_by(question_id=q.id).all() for q in questions}
+            return render_template('quizz.html', module=module, questions=questions, responses=responses)
+       
+    return redirect(url_for('login'))
 
+@app.route('/<user_email>/<module_name>/result/<int:score>')
+def result(user_email, module_name, score):
+    return render_template('resultat.html', score=score, module_name=module_name, user_email=user_email)
 
-# Page de résultat
-@app.route('/result/<int:score>')
-def result(score):
-    if 'username' in session:
-        return render_template('result.html', score=score)
-    else:
-        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
