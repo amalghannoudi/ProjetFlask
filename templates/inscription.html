@@ -1,1 +1,105 @@
-<p>inscription</p>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Sign Up</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('../static/assets/quizz4.jpg'); /* Use relative path */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-title {
+            color: #17a2b8;
+            font-weight: 700;
+        }
+
+        .input-custom {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form method="POST" style="width: 27rem;">
+            <h3 class="fw-normal mb-3 pb-3 text-center custom-title">Sign Up</h3>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-danger" role="alert">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% endwith %}
+            
+            {{ form.hidden_tag() }}
+
+            <!-- Name Field -->
+            <div class="form-outline mb-4">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control form-control-lg input-custom", placeholder="Your Name") }}
+                {% for error in form.name.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-outline mb-4">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control form-control-lg input-custom", placeholder="Email address") }}
+                {% for error in form.email.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-outline mb-4">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control form-control-lg input-custom", placeholder="Password") }}
+                {% for error in form.password.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-outline mb-4">
+                {{ form.confirm_password.label(class="form-label") }}
+                {{ form.confirm_password(class="form-control form-control-lg input-custom", placeholder="Confirm password") }}
+                {% for error in form.confirm_password.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="pt-1 mb-4 text-center">
+                <button class="btn btn-info btn-lg btn-block" type="submit">Sign Up</button>
+            </div>
+
+            <p class="text-center">Already have an account? <a href="{{ url_for('login') }}" class="link-info">Log in here</a></p>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+            integrity="sha384-pjaaA8dDz/2QLOcFtfDbjJv6lWKdMiX9rfWX5k5EjJJreXRflqnLPE8mxKdpFi24"
+            crossorigin="anonymous"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, Length, EqualTo
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -12,7 +12,7 @@ app.secret_key = "key"
 app.permanent_session_lifetime = timedelta(minutes=10)
 
 # Configuration de la base de données pour PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/ProjetPython'  # Modifiez le nom d'utilisateur et le mot de passe si nécessaire
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/ProjetPython'  # Modifiez le nom d'utilisateur et le mot de passe si nécessaire
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Créez une instance de SQLAlchemy
@@ -21,16 +21,19 @@ bootstrap = Bootstrap(app)
 
 # Modèle pour représenter un utilisateur
 class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), primary_key=True, unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return f"User('{self.name}', '{self.email}')"
 
 # Modèle pour représenter un module
 class Module(db.Model):
     __tablename__ = 'modules'
     
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=False, )
     image = db.Column(db.String(200), nullable=False)
 # Modèle pour représenter une question
 class Question(db.Model):
@@ -57,6 +60,14 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     submit = SubmitField('Login')
+
+# Formulaire de inscription
+class SignupForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=50)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password', message='Passwords must match.')])
+    submit = SubmitField('Sign Up')
 
 # Créez les tables de la base de données
 with app.app_context():
@@ -87,23 +98,26 @@ def login():
 # Page d'inscription
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+    form = SignupForm()
+    if form.validate_on_submit():
+        name = form.name.data  # Get name from form
+        email = form.email.data
+        password = form.password.data
 
-        # Vérifiez si l'utilisateur existe déjà
+        # Check if the user already exists
         if Users.query.filter_by(email=email).first():
-            flash('L\'email est déjà utilisé.')
+            flash('The email is already registered.')
         else:
-            # Hacher le mot de passe avant de l'enregistrer
-            hashed_password = generate_password_hash(password, method='sha256')
-            new_user = Users(email=email, password=hashed_password)
+            # Hash the password before saving it
+            # hashed_password = generate_password_hash(password, method='sha256')
+            new_user = Users(name=name, email=email, password=password)
             db.session.add(new_user)
             db.session.commit()
-            flash('Inscription réussie, veuillez vous connecter.')
+            flash('Registration successful. Please log in.')
             return redirect(url_for('login'))
 
-    return render_template('inscription.html')
+    return render_template('inscription.html', form=form)
+
 
 # Page d'accueil
 @app.route('/home/<user>', methods=['GET', 'POST'])
