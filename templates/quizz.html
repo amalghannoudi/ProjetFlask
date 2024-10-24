@@ -1,1 +1,48 @@
-<p>quizz</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Quiz</title>
+    <style>
+        /* Styles pour le corps de la page avec une image d'arrière-plan */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif; /* Police par défaut */
+            display: flex; /* Utiliser Flexbox pour le corps */
+            justify-content: center; /* Centrer horizontalement */
+            align-items: center; /* Centrer verticalement */
+            min-height: 100vh; /* Hauteur minimale pour occuper tout l'écran */
+            background-image: url("{{ url_for('static', filename='assets/question.jpg') }}");
+            background-size: cover; /* L'image couvre tout l'écran */
+            background-position: center; /* Centrer l'image */
+            background-repeat: no-repeat; /* Ne pas répéter l'image */
+        }
+    </style>
+</head>
+<body>
+    <div class="containerQUIZ mt-5">
+        <h1 class="module-title">{{ module.title }}</h1> <!-- Titre du module -->
+        <form method="POST" action="">
+            {% for question in questions %}
+                <div class="question">
+                    <h5>{{ question.question }}</h5>
+                    {% for response in responses[question.id] %}
+                        <div class="form-check response">
+                            <input class="form-check-input" type="radio" name="question_{{ question.id }}" id="response_{{ response.id }}" value="{{ response.response }}">
+                            <label class="form-check-label" for="response_{{ response.id }}">
+                                {{ response.response }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="align-left"> <!-- Nouvelle div pour aligner le bouton à gauche -->
+                <button type="submit" class="btn btn-primary">Soumettre</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
