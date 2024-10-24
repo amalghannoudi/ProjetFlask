@@ -1,1 +1,52 @@
-<p>accueil</p>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container d-flex justify-content-center">
+        <div class="input-group" style="width: 50%;">
+            <form method="POST" action="/" class="w-100 d-flex">
+                <input id="search-input" type="search" name="search" placeholder="Search .." class="form-control mr-2" />
+                <button id="search-button" type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    
+    
+    <div class="container mt-4">
+        <div class="row">
+            {% for module in modules %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ url_for('static', filename='assets/' ~ module.image) }}" class="card-img-top img-fluid" alt="{{ module.titre }}" style="height: 150px; object-fit: cover;"/>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ module.title }}</h5>
+                        <div class="pt-1 mb-4 text-center">
+                            <a href="{{ url_for('quiz', module_name=module.title) }}" class="btn btn-info btn-lg btn-block">Passer le Quizz</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+            integrity="sha384-pjaaA8dDz/2QLOcFtfDbjJv6lWKdMiX9rfWX5k5EjJJreXRflqnLPE8mxKdpFi24"
+            crossorigin="anonymous"></script>
+</body>
+</html>
