@@ -2,12 +2,76 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Résultats du Quiz</title>
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("{{ url_for('static', filename='../static/assets/quizz7.PNG') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 40px; /* You can adjust this if you want to change vertical padding */
+            padding-left: 150px; /* Increased left padding */
+            padding-right: 150px; /* Increased right padding */
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 500px; /* Increased max-width */
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff087b;
+            font-weight: bold;
+            font-size: 2.8em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            color: #5e0425;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Résultats du Quiz</h1>
-    <p>Email de l'utilisateur : {{ user_email }}</p>
-    <p>Module : {{ module_name }}</p>
-    <p>Score : {{ score }}%</p>
+    <div class="form-container">
+        <h1>Résultats du Quiz</h1>
+        <br>
+        <p><span class="highlight">Utilisateur :</span> {{ user_name }}</p>
+        <p><span class="highlight">Module :</span> {{ module_name }}</p>
+        <p><span class="highlight">Score :</span> {{ score }}%</p>
+        <br>
+        <br>
+        <br>
+        <p style="font-size: 1.8em;"    >see you next time! 🚀</p>
+    </div>
 </body>
 </html>
+
+<!-- <body>
+    <div class="form-container">
+        <h1 style="font-size: 2m.5e; color: #28a745;">Félicitations pour vos Résultats!</h1>
+        <p><span class="highlight">utilisateur :</span> {{ user_email }}</p>
+        <p><span class="highlight">Module :</span> {{ module_name }}</p>
+        <p><span class="highlight">Score :</span> {{ score }}%</p>
+        <p style="font-size: 1.2em; font-style: italic; color: #555;">Bravo pour vos efforts ! Peu importe le résultat, chaque quiz est une chance d'apprendre et de s'améliorer.</p>
+        <p style="font-size: 1.1em;">On se revoit bientôt pour de nouveaux défis passionnants. Continuez à viser l'excellence et amusez-vous en apprenant ! 🚀</p>
+    </div>
+</body> -->
+

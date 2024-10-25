@@ -7,12 +7,29 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Accueil</title>
 </head>
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+    }
+    
+    body {
+        background-image: url('../static/assets/quizz6.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* Fixes the image to the viewport */
+    }
+</style>
 <body>
     <div class="container d-flex justify-content-center">
         <div class="input-group" style="width: 50%;">
             <form method="POST" action="/" class="w-100 d-flex">
-                <input id="search-input" type="search" name="search" placeholder="Search .." class="form-control mr-2" />
+                <input id="search-input" type="search" name="search" placeholder="Search .." class="form-control mr-2" onkeyup="filterModules()" />
                 <button id="search-button" type="submit" class="btn btn-primary">
                     <i class="fas fa-search"></i>
                 </button>
@@ -20,27 +37,40 @@
         </div>
     </div>
     
-    
-    
     <div class="container mt-4">
-        <div class="row">
+        <div class="row" id="modules-container">
             {% for module in modules %}
-            <div class="col-md-4">
+            <div class="col-md-4 module-card">
                 <div class="card mb-4">
                     <img src="{{ url_for('static', filename='assets/' ~ module.image) }}" class="card-img-top img-fluid" alt="{{ module.titre }}" style="height: 150px; object-fit: cover;"/>
                     <div class="card-body">
                         <h5 class="card-title">{{ module.title }}</h5>
                         <div class="pt-1 mb-4 text-center">
                             <a href="{{ url_for('quiz', module_name=module.title) }}" class="btn btn-info btn-lg btn-block">Passer le Quizz</a>
-
                         </div>
                     </div>
                 </div>
             </div>
-        {% endfor %}
-        
+            {% endfor %}
         </div>
     </div>
+
+    <script>
+        function filterModules() {
+            const input = document.getElementById('search-input');
+            const filter = input.value.toLowerCase();
+            const modules = document.querySelectorAll('.module-card');
+
+            modules.forEach(module => {
+                const title = module.querySelector('.card-title').textContent.toLowerCase();
+                if (title.includes(filter)) {
+                    module.style.display = ''; // Show the module
+                } else {
+                    module.style.display = 'none'; // Hide the module
+                }
+            });
+        }
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

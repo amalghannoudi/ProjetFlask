@@ -133,8 +133,11 @@ def home(user):
         return redirect(url_for('login'))
 
 @app.route('/quiz/<module_name>', methods=['GET', 'POST'])
-def quiz(module_name):
-    if 'username' in session:
+def quiz(module_name): 
+    if 'username' in session: 
+        user_email = session['username'] 
+        user = Users.query.filter_by(email=user_email).first() 
+
         if request.method == 'POST':
             score = 0
             total_questions = 0
@@ -150,20 +153,29 @@ def quiz(module_name):
 
             final_score = (score / total_questions) * 100 if total_questions > 0 else 0
 
-            # Rediriger vers la page de résultat
-            return redirect(url_for('result', user_email=session['username'], module_name=module_name, score=int(final_score)))
+            # Rediriger vers la page de résultat en passant le nom de l'utilisateur
+            return redirect(url_for('result', user_name=user.name, module_name=module_name, score=int(final_score)))  # <-- Fixed here
 
         module = Module.query.filter_by(title=module_name).first()
         if module:
             questions = Question.query.filter_by(module_id=module.id).all()
             responses = {q.id: Response.query.filter_by(question_id=q.id).all() for q in questions}
             return render_template('quizz.html', module=module, questions=questions, responses=responses)
-       
+
     return redirect(url_for('login'))
 
-@app.route('/<user_email>/<module_name>/result/<int:score>')
-def result(user_email, module_name, score):
-    return render_template('resultat.html', score=score, module_name=module_name, user_email=user_email)
+@app.route('/submit_quiz', methods=['POST'])
+def submit_quiz():
+    module_name = request.form.get('module_name')  # Example form field
+    score = calculate_score()  # Your score calculation logic
+    username = get_current_user_name()  # Function to get the current user's name
+
+    return redirect(url_for('result', module_name=module_name, score=score, user_name=username))
+
+
+@app.route('/<user_name>/<module_name>/result/<int:score>')
+def result(user_name, module_name, score):
+    return render_template('resultat.html', score=score, module_name=module_name, user_name=user_name)
 
 
 if __name__ == '__main__':
